@@ -13,8 +13,8 @@ from Agent import BaseAgent
 class QLearningAgent(BaseAgent):
         
     def update(self,s,a,r,s_next,done):
-        # G_t = self.
-
+        # TO DO: Add own code
+        pass
 
 def q_learning(n_timesteps, learning_rate, gamma, policy='egreedy', epsilon=None, temp=None, plot=True, eval_interval=500):
     ''' runs a single repetition of q_learning

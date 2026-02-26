@@ -76,7 +76,7 @@ class StochasticWindyGridworld:
             done = False
             r = self.reward_per_step           
             
-        return s_next, r, done
+        return s_next, r, done  
 
     def model(self,s,a):
         ''' Returns vectors p(s'|s,a) and r(s,a,s') for given s and a.
@@ -252,7 +252,7 @@ def test():
         s_next,r,done = env.step(a) # execute action in the environment
         p_sas,r_sas = env.model(s,a)
         print("State {}, Action {}, Reward {}, Next state {}, Done {}, p(s'|s,a) {}, r(s,a,s') {}".format(s,a,r,s_next,done,p_sas,r_sas))
-        env.render(Q_sa=Q_sa,plot_optimal_policy=False,step_pause=step_pause) # display the environment
+        env.render(Q_sa=Q_sa,plot_optimal_policy=True,step_pause=step_pause) # display the environment
         if done: 
             s = env.reset()
         else: 

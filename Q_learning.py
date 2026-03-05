@@ -35,7 +35,7 @@ def q_learning(n_timesteps, learning_rate, gamma, policy='egreedy', epsilon=None
     eval_returns = []
 
 
-    episodes = 1000
+    episodes = 10000
     # TO DO: Write your Q-learning algorithm here!
     for episode in range(episodes):
         done = False
@@ -43,6 +43,7 @@ def q_learning(n_timesteps, learning_rate, gamma, policy='egreedy', epsilon=None
             mean_return = agent.evaluate(eval_env)
             eval_returns.append(mean_return)
             eval_timesteps.append(episode)
+            print(episode, mean_return)
         s = env.reset()
         while not done:
             action = agent.select_action(s, policy, epsilon, temp)
@@ -58,8 +59,9 @@ def q_learning(n_timesteps, learning_rate, gamma, policy='egreedy', epsilon=None
 
 def test():
     
-    n_timesteps = 1000
-    eval_interval=100
+    n_timesteps = 10000
+    eval_interval = 100
+    # eval_interval=100
     gamma = 1.0
     learning_rate = 0.1
 

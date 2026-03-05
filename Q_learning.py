@@ -14,12 +14,13 @@ from Agent import BaseAgent
 class QLearningAgent(BaseAgent):
         
     def update(self,s,a,r,s_next,done):
-        max_a = -math.inf
-        for a in range(self.n_actions):
-            a_prime = self.Q_sa[s_next, a]
-            if a_prime > max_a:
-                max_a = a_prime
-        G_t = r + self.learning_rate * max_a
+        # max_a = -math.inf
+        # for action in range(self.n_actions):
+        #     a_prime = self.Q_sa[s_next, action]
+        #     if a_prime > max_a:
+        #         max_a = a_prime
+        max_a = np.max(self.Q_sa[s_next])
+        G_t = r + self.gamma * max_a
         self.Q_sa[s, a] = self.Q_sa[s, a] + self.learning_rate * (G_t - self.Q_sa[s, a])
 
 
@@ -32,20 +33,21 @@ def q_learning(n_timesteps, learning_rate, gamma, policy='egreedy', epsilon=None
     agent = QLearningAgent(env.n_states, env.n_actions, learning_rate, gamma)
     eval_timesteps = []
     eval_returns = []
-    done = False
 
-    mean_returns = []
-    episodes = 10000
+
+    episodes = 1000
     # TO DO: Write your Q-learning algorithm here!
     for episode in range(episodes):
+        done = False
         if episode % eval_interval == 0:
             mean_return = agent.evaluate(eval_env)
-            mean_returns.append(mean_return)
+            eval_returns.append(mean_return)
+            eval_timesteps.append(episode)
         s = env.reset()
         while not done:
             action = agent.select_action(s, policy, epsilon, temp)
             s_next, r, done = env.step(action)
-            agent.update(s_next, action, r, s_next, done)
+            agent.update(s, action, r, s_next, done)
             s = s_next
     
     if plot:
@@ -70,7 +72,7 @@ def test():
     plot = True
 
     eval_returns, eval_timesteps = q_learning(n_timesteps, learning_rate, gamma, policy, epsilon, temp, plot, eval_interval)
-    print(eval_returns,eval_timesteps)
+    print(eval_returns)
 
 if __name__ == '__main__':
     test()

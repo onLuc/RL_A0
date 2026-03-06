@@ -81,8 +81,23 @@ def n_step_Q(n_timesteps, max_episode_length, learning_rate, gamma,
             actions.pop(0)
             rewards.pop(0)
     if plot:
-       env.render(Q_sa=pi.Q_sa,plot_optimal_policy=True,step_pause=0.1) # Plot the Q-value estimates during n-step Q-learning execution
-        
+        s = eval_env.reset()
+        for t in range(n_timesteps):
+            a = pi.select_action(s, policy="greedy")  # sample random action
+            s_next, r, done = eval_env.step(
+                a)  # execute action in the environment
+            p_sas, r_sas = eval_env.model(s, a)
+            print(
+                "State {}, Action {}, Reward {}, Next state {}, Done {}, p(s'|s,a) {}, r(s,a,s') {}".format(
+                    s, a, r, s_next, done, p_sas, r_sas))
+            eval_env.render(Q_sa=pi.Q_sa, plot_optimal_policy=True,
+                            step_pause=0.5)  # display the environment
+            if done:
+                s = eval_env.reset()
+                quit()
+            else:
+                s = s_next
+
     return np.array(eval_returns), np.array(eval_timesteps) 
 
 def test():

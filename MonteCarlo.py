@@ -19,11 +19,10 @@ class MonteCarloAgent(BaseAgent):
         done indicates whether the final s in states is was a terminal state '''
         # TO DO: Add own code
         G_t = 0
-        for i in range(len(rewards)):
-            G_t += self.gamma ** i * rewards[i]
-
-        s, a = states[0], actions[0]
-        self.Q_sa[s, a] = self.Q_sa[s, a] + self.learning_rate * (G_t - self.Q_sa[s, a])
+        for i in reversed(range(len(actions))):
+            G_t = rewards[i] + self.gamma * G_t
+            s, a = states[i], actions[i]
+            self.Q_sa[s, a] += self.learning_rate * (G_t - self.Q_sa[s, a])
 
 def monte_carlo(n_timesteps, max_episode_length, learning_rate, gamma, 
                    policy='egreedy', epsilon=None, temp=None, plot=True, eval_interval=500):
@@ -36,6 +35,8 @@ def monte_carlo(n_timesteps, max_episode_length, learning_rate, gamma,
 
     eval_timesteps = np.arange(0, n_timesteps, eval_interval)
     eval_returns = []
+
+    successes = 0
 
     eval_returns.append(pi.evaluate(eval_env))
     next_eval_idx = 1
@@ -63,9 +64,13 @@ def monte_carlo(n_timesteps, max_episode_length, learning_rate, gamma,
             while next_eval_idx < len(eval_timesteps) and t >= eval_timesteps[next_eval_idx]:
                 eval_returns.append(pi.evaluate(eval_env))
                 next_eval_idx += 1
+            
+            if done:
+                successes += 1
 
-        for i in range(len(rewards)):
-            pi.update(states[i:], actions[i:], rewards[i:])
+        pi.update(states, actions, rewards)
+    
+    print(f"Successes: {successes}")
 
     if plot:
         s = eval_env.reset()

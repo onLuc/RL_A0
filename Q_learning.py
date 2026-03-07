@@ -33,7 +33,7 @@ def q_learning(n_timesteps, learning_rate, gamma, policy='egreedy', epsilon=None
     s = env.reset()
     for t in range(n_timesteps):
         if t % eval_interval == 0:
-            mean_return = agent.evaluate(env)
+            mean_return = agent.evaluate(eval_env)
             eval_returns.append(mean_return)
             eval_timesteps.append(t)
 

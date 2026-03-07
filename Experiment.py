@@ -127,7 +127,13 @@ def experiment():
         learning_curve, timesteps = average_over_repetitions(backup, n_repetitions, n_timesteps, max_episode_length, learning_rate, 
                                               gamma, policy, epsilon, temp, smoothing_window, plot, n, eval_interval)
         Plot.add_curve(timesteps,learning_curve,label=r'{}-step Q-learning'.format(n))
+
     backup = 'mc'
+    # MC parameters:
+    epsilon = 0.2
+    learning_rate = 0.03
+    max_episode_length = 500
+
     print('Running Monte Carlo')
     learning_curve, timesteps = average_over_repetitions(backup, n_repetitions, n_timesteps, max_episode_length, learning_rate, 
                                           gamma, policy, epsilon, temp, smoothing_window, plot, n, eval_interval)

@@ -33,17 +33,14 @@ def monte_carlo(n_timesteps, max_episode_length, learning_rate, gamma,
     env = StochasticWindyGridworld(initialize_model=False)
     eval_env = StochasticWindyGridworld(initialize_model=True)
     pi = MonteCarloAgent(env.n_states, env.n_actions, learning_rate, gamma)
-    eval_timesteps = []
+
+    eval_timesteps = np.arange(0, n_timesteps, eval_interval)
     eval_returns = []
 
+    eval_returns.append(pi.evaluate(eval_env))
+    next_eval_idx = 1
     t = 0
     while t < n_timesteps:
-
-        if t % eval_interval == 0:
-            mean_return = pi.evaluate(eval_env)
-            eval_returns.append(mean_return)
-            eval_timesteps.append(t)
-
         s = env.reset()
         states = [s]
         rewards = []
@@ -63,10 +60,9 @@ def monte_carlo(n_timesteps, max_episode_length, learning_rate, gamma,
             step += 1
             t += 1
 
-            if t % eval_interval == 0:
-                mean_return = pi.evaluate(eval_env)
-                eval_returns.append(mean_return)
-                eval_timesteps.append(t)
+            while next_eval_idx < len(eval_timesteps) and t >= eval_timesteps[next_eval_idx]:
+                eval_returns.append(pi.evaluate(eval_env))
+                next_eval_idx += 1
 
         for i in range(len(rewards)):
             pi.update(states[i:], actions[i:], rewards[i:])

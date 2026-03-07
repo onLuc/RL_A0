@@ -74,8 +74,14 @@ def experiment():
     print("V*(s=3) =", V_start)
 
     # Compute average reward per timestep under the optimal policy
-    expected_steps = 101 - V_start # 100 + 1 because we do not get a penalty for stepping into the goal state.
+    # expected_steps = 101 - V_start # 100 + 1 because we do not get a penalty for stepping into the goal state.
+
+    goal_reward = env.goal_rewards[0]
+    step_reward = env.reward_per_step
+    expected_steps = (V_start - goal_reward) / step_reward + 1
+
     mean_reward_per_timestep = V_start / expected_steps
+
     print("Expected number of steps under optimal policy:", expected_steps)
     print("Mean reward per timestep under optimal policy:", mean_reward_per_timestep)
     

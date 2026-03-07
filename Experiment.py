@@ -77,9 +77,6 @@ def experiment():
     optimal_episode_return = 83.67825468739042 # set the optimal return per episode you found in the DP assignment here
     
     #### Assignment 2: Effect of exploration
-    goal_locations = [[7, 3], [3, 2]]
-    goal_rewards = [100, 5]
-
     policy = 'egreedy'
     epsilons = [0.03,0.1,0.3]
     learning_rate = 0.1
@@ -118,7 +115,7 @@ def experiment():
     Plot.add_hline(optimal_episode_return, label="DP optimum")
     Plot.save('on_off_policy.png')
     
-    # # ##### Assignment 4: Back-up depth
+    ##### Assignment 4: Back-up depth
     policy = 'egreedy'
     epsilon = 0.05 # set epsilon back to original value
     learning_rate = 0.1
@@ -134,11 +131,11 @@ def experiment():
 
     backup = 'mc'
 
-    # Keeping the same parameters and commenting these out for a fair comparison
+    # Keeping the same parameters and commenting these out for a fair comparison, or not!
     # MC parameters:
-    # epsilon = 0.2
-    # learning_rate = 0.03
-    # max_episode_length = 500
+    epsilon = 0.2 #0.4, 0.2
+    learning_rate = 0.03 #0.02, 0.03
+    max_episode_length = 300 #300
 
     print('Running Monte Carlo')
     learning_curve, timesteps = average_over_repetitions(backup, n_repetitions, n_timesteps, max_episode_length, learning_rate, 

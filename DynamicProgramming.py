@@ -35,13 +35,14 @@ class QValueIterationAgent:
         self.Q_sa[s][a] = sum_s_prime
     
     
-def Q_value_iteration(env, gamma=1.0, threshold=0.001):
+def Q_value_iteration(env, gamma=1.0, threshold=0.001, max_iterations=10000, render_each_sweep=True):
     ''' Runs Q-value iteration. Returns a converged QValueIterationAgent object '''
 
     QIagent = QValueIterationAgent(env.n_states, env.n_actions, gamma)
 
-    iteration = 0
-    while True:
+    # iteration = 0
+    # while True:
+    for iteration in range(max_iterations):
         delta = 0.0
 
         for state in range(QIagent.n_states):
@@ -53,11 +54,12 @@ def Q_value_iteration(env, gamma=1.0, threshold=0.001):
 
         # Plot current Q-value estimates & print max error
         print(f"Sweep {iteration}: max absolute error = {delta:.6f}")
-        env.render(Q_sa=QIagent.Q_sa, plot_optimal_policy=True, step_pause=0.2)
+        if render_each_sweep:
+            env.render(Q_sa=QIagent.Q_sa, plot_optimal_policy=True, step_pause=0.2)
 
         if delta < threshold:
             break
-        iteration += 1
+        # iteration += 1
 
     return QIagent
 

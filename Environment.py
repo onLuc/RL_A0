@@ -5,8 +5,12 @@ Practical for course 'Reinforcement Learning',
 Leiden University, The Netherlands
 By Thomas Moerland
 """
+import os
 import matplotlib
-matplotlib.use('Qt5Agg') # 'TkAgg'
+if os.environ.get('RL_INTERACTIVE', '0') == '1':
+    matplotlib.use('Qt5Agg') # 'TkAgg'
+else:
+    matplotlib.use('Agg')
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle,Circle,Arrow

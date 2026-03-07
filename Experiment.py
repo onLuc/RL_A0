@@ -16,14 +16,14 @@ from MonteCarlo import monte_carlo
 from Helper import LearningCurvePlot, smooth
 
 def average_over_repetitions(backup, n_repetitions, n_timesteps, max_episode_length, learning_rate, gamma, policy='egreedy', 
-                    epsilon=None, temp=None, smoothing_window=None, plot=False, n=5, eval_interval=500):
+                    epsilon=None, temp=None, smoothing_window=None, plot=False, n=5, eval_interval=500, goal_locations=None, goal_rewards=None):
 
     returns_over_repetitions = []
     now = time.time()
     
     for rep in range(n_repetitions): # Loop over repetitions
         if backup == 'q':
-            returns, timesteps = q_learning(n_timesteps, learning_rate, gamma, policy, epsilon, temp, plot, eval_interval)
+            returns, timesteps = q_learning(n_timesteps, learning_rate, gamma, policy, epsilon, temp, plot, eval_interval, goal_locations, goal_rewards)
         elif backup == 'sarsa':
             returns, timesteps = sarsa(n_timesteps, learning_rate, gamma, policy, epsilon, temp, plot, eval_interval)
         elif backup == 'nstep':
@@ -77,11 +77,15 @@ def experiment():
     optimal_episode_return = 83.67825468739042 # set the optimal return per episode you found in the DP assignment here
     
     #### Assignment 2: Effect of exploration
+    goal_locations = [[7, 3], [3, 2]]
+    goal_rewards = [100, 5]
+
     policy = 'egreedy'
     epsilons = [0.03,0.1,0.3]
     learning_rate = 0.1
     backup = 'q'
-    Plot = LearningCurvePlot(title = 'Exploration: $\epsilon$-greedy versus softmax exploration')    
+    # Added the r before the string as \e is apparently an invalid escape statement
+    Plot = LearningCurvePlot(title = r'Exploration: $\epsilon$-greedy versus softmax exploration')
     Plot.set_ylim(-100, 100) 
     for epsilon in epsilons:    
         print('Running {}-greedy with epsilon = {}'.format(backup,epsilon))    
@@ -129,10 +133,12 @@ def experiment():
         Plot.add_curve(timesteps,learning_curve,label=r'{}-step Q-learning'.format(n))
 
     backup = 'mc'
+
+    # Keeping the same parameters and commenting these out for a fair comparison
     # MC parameters:
-    epsilon = 0.2
-    learning_rate = 0.03
-    max_episode_length = 500
+    # epsilon = 0.2
+    # learning_rate = 0.03
+    # max_episode_length = 500
 
     print('Running Monte Carlo')
     learning_curve, timesteps = average_over_repetitions(backup, n_repetitions, n_timesteps, max_episode_length, learning_rate, 

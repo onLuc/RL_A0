@@ -9,7 +9,6 @@ By Thomas Moerland
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
-from statsmodels.nonparametric.kernel_regression import KernelReg
 
 class LearningCurvePlot:
 

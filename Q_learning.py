@@ -21,12 +21,22 @@ class QLearningAgent(BaseAgent):
 
 
 def q_learning(n_timesteps, learning_rate, gamma, policy='egreedy', epsilon=None, temp=None, plot=True,
-               eval_interval=500):
+               eval_interval=500, goal_locations=None, goal_rewards=None):
     ''' runs a single repetition of q_learning
     Return: rewards, a vector with the observed rewards at each timestep '''
 
     env = StochasticWindyGridworld(initialize_model=False)
     eval_env = StochasticWindyGridworld(initialize_model=True)
+
+    if goal_locations is not None:
+        env.goal_locations = goal_locations
+        eval_env.goal_locations = goal_locations
+    if goal_rewards is not None:
+        env.goal_rewards = goal_rewards
+        eval_env.goal_rewards = goal_rewards
+    if goal_locations is not None or goal_rewards is not None:
+        eval_env._construct_model()
+
     agent = QLearningAgent(env.n_states, env.n_actions, learning_rate, gamma)
     eval_timesteps = []
     eval_returns = []

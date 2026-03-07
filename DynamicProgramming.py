@@ -40,21 +40,24 @@ def Q_value_iteration(env, gamma=1.0, threshold=0.001):
 
     QIagent = QValueIterationAgent(env.n_states, env.n_actions, gamma)
 
-    episodes = 10000
-    for ep in range(episodes):
-        delta = 0
+    iteration = 0
+    while True:
+        delta = 0.0
+
         for state in range(QIagent.n_states):
             for action in range(QIagent.n_actions):
                 x = QIagent.Q_sa[state][action]
                 p_sas, r_sas = env.model(state, action)
                 QIagent.update(state, action, p_sas, r_sas)
                 delta = max(delta, abs(x - QIagent.Q_sa[state][action]))
+
+        # Plot current Q-value estimates & print max error
+        print(f"Sweep {iteration}: max absolute error = {delta:.6f}")
+        env.render(Q_sa=QIagent.Q_sa, plot_optimal_policy=True, step_pause=0.2)
+
         if delta < threshold:
             break
-
-    # Plot current Q-value estimates & print max error
-    env.render(Q_sa=QIagent.Q_sa, plot_optimal_policy=True, step_pause=0.2)
-    # print("Q-value iteration, iteration {}, max error {}".format(i,max_error))
+        iteration += 1
 
     return QIagent
 
@@ -64,6 +67,20 @@ def experiment():
     env = StochasticWindyGridworld(initialize_model=True)
     env.render()
     QIagent = Q_value_iteration(env,gamma,threshold)
+
+    # Compute V*(s=3) at the start state
+    start_state = env.reset()   # this is s = 3 in this environment
+    V_start = np.max(QIagent.Q_sa[start_state])
+    print("V*(s=3) =", V_start)
+
+    # Compute average reward per timestep under the optimal policy
+    # If optimal expected return from start is V_start, with reward -1 per non-terminal step
+    # and +100 on the final step, then for gamma=1:
+    # V_start = 100 - (N - 1), where N is expected number of steps until goal
+    expected_steps = 101 - V_start
+    mean_reward_per_timestep = V_start / expected_steps
+    print("Expected number of steps under optimal policy:", expected_steps)
+    print("Mean reward per timestep under optimal policy:", mean_reward_per_timestep)
     
     # view optimal policy
     done = False
@@ -73,9 +90,6 @@ def experiment():
         s_next, r, done = env.step(a)
         env.render(Q_sa=QIagent.Q_sa,plot_optimal_policy=True,step_pause=0.5)
         s = s_next
-
-    # TO DO: Compute mean reward per timestep under the optimal policy
-    # print("Mean reward per timestep under optimal policy: {}".format(mean_reward_per_timestep))
     
 if __name__ == '__main__':
     experiment()

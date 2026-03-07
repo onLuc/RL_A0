@@ -5,12 +5,8 @@ Practical for course 'Reinforcement Learning',
 Leiden University, The Netherlands
 By Thomas Moerland
 """
-import os
 import matplotlib
-if os.environ.get('RL_INTERACTIVE', '0') == '1':
-    matplotlib.use('Qt5Agg') # 'TkAgg'
-else:
-    matplotlib.use('Agg')
+matplotlib.use('Qt5Agg') # 'TkAgg'
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle,Circle,Arrow
@@ -169,7 +165,7 @@ class StochasticWindyGridworld:
                     # Update p_sas and r_sas
                     p_sas[s,a,next_state_without_wind] += (1-self.wind_blows_proportion)
                     for (i,goal) in enumerate(self.goal_locations):
-                        if np.all(next_location_without_wind == goal): # reached a goal!
+                        if np.all(next_state_without_wind == goal): # reached a goal!
                             r_sas[s,a,next_state_without_wind]  = self.goal_rewards[i] 
 
         self.p_sas = p_sas

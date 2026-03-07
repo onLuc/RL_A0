@@ -44,8 +44,8 @@ def average_over_repetitions(backup, n_repetitions, n_timesteps, max_episode_len
 def experiment():
     ####### Settings
     # Experiment      
-    n_repetitions = 1 # 20
-    smoothing_window = 3 # 9 # Must be an odd number. Use 'None' to switch smoothing off!
+    n_repetitions = 20 # 20
+    smoothing_window = 5 # 9 # Must be an odd number. Use 'None' to switch smoothing off!
     plot = False # Plotting is very slow, switch it off when we run repetitions
     
     # MDP    

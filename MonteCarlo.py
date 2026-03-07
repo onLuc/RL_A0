@@ -36,13 +36,13 @@ def monte_carlo(n_timesteps, max_episode_length, learning_rate, gamma,
     eval_timesteps = []
     eval_returns = []
 
-    for episode in range(n_timesteps):
+    t = 0
+    while t < n_timesteps:
 
-        if episode % eval_interval == 0:
-            mean_return = pi.evaluate(env)
-            print(mean_return)
+        if t % eval_interval == 0:
+            mean_return = pi.evaluate(eval_env)
             eval_returns.append(mean_return)
-            eval_timesteps.append(episode)
+            eval_timesteps.append(t)
 
         s = env.reset()
         states = [s]
@@ -51,14 +51,22 @@ def monte_carlo(n_timesteps, max_episode_length, learning_rate, gamma,
         done = False
 
         step = 0
-        while not done and step < max_episode_length:
-            # for step in range(max_episode_length):
+        while (not done) and (step < max_episode_length) and (t < n_timesteps):
             action = pi.select_action(s, policy, epsilon, temp)
             s_next, r, done = env.step(action)
+
             states.append(s_next)
             actions.append(action)
             rewards.append(r)
+
             s = s_next
+            step += 1
+            t += 1
+
+            if t % eval_interval == 0:
+                mean_return = pi.evaluate(eval_env)
+                eval_returns.append(mean_return)
+                eval_timesteps.append(t)
 
         for i in range(len(rewards)):
             pi.update(states[i:], actions[i:], rewards[i:])
@@ -67,22 +75,12 @@ def monte_carlo(n_timesteps, max_episode_length, learning_rate, gamma,
         s = eval_env.reset()
         for t in range(n_timesteps):
             a = pi.select_action(s, policy="greedy")  # sample random action
-            s_next, r, done = eval_env.step(
-                a)  # execute action in the environment
-            p_sas, r_sas = eval_env.model(s, a)
-            print(
-                "State {}, Action {}, Reward {}, Next state {}, Done {}, p(s'|s,a) {}, r(s,a,s') {}".format(
-                    s, a, r, s_next, done, p_sas, r_sas))
-            eval_env.render(Q_sa=pi.Q_sa, plot_optimal_policy=True,
-                            step_pause=0.5)  # display the environment
+            s_next, r, done = eval_env.step(a)  # execute action in the environment
+            eval_env.render(Q_sa=pi.Q_sa, plot_optimal_policy=True, step_pause=0.1)  # display the environment
             if done:
                 s = eval_env.reset()
-                quit()
             else:
                 s = s_next
-    # if plot:
-    #    env.render(Q_sa=pi.Q_sa,plot_optimal_policy=True,step_pause=0.1) # Plot the Q-value estimates during Monte Carlo RL execution
-
                  
     return np.array(eval_returns), np.array(eval_timesteps) 
     

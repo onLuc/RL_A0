@@ -38,6 +38,14 @@ class LearningCurvePlot:
         self.ax.legend()
         self.fig.savefig(name,dpi=300)
 
+    def add_curve_with_ci(self, x, y_mean, y_low, y_high, label=None, alpha=0.2):
+        if label is not None:
+            self.ax.plot(x, y_mean, label=label)
+        else:
+            self.ax.plot(x, y_mean)
+
+        self.ax.fill_between(x, y_low, y_high, alpha=alpha)
+
 def smooth(y, window, poly=2):
     '''
     y: vector to be smoothed 

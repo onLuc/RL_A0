@@ -21,7 +21,6 @@ class BaseAgent:
     def select_action(self, s, policy='egreedy', epsilon=None, temp=None):
         
         if policy == 'greedy':
-            # TO DO: Add own code
             return argmax(self.Q_sa[s])
 
         elif policy == 'egreedy':
@@ -45,9 +44,9 @@ class BaseAgent:
         elif policy == 'softmax':
             if temp is None:
                 raise KeyError("Provide a temperature")
-                
-            # TO DO: Add own code
-            a = np.random.randint(0,self.n_actions) # Replace this with correct action selection
+            
+            action_probs = softmax(self.Q_sa[s], temp)
+            a = np.random.choice(self.n_actions, p=action_probs)
               
         return a
         

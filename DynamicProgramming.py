@@ -139,7 +139,7 @@ def experiment_old():
     plt.legend()
     plt.tight_layout()
     plt.savefig("dp_convergence_two_goals.png", dpi=200)
-    plt.show()
+    # plt.show()
 
     # env.goal_locations = [[7, 3]]
     # env.goal_rewards = [100]

@@ -120,7 +120,8 @@ def experiment():
                                                               learning_rate,
                                                               gamma, policy, epsilon, temp, smoothing_window, plot, n,
                                                               eval_interval, goal_locations=single_goal_locations, goal_rewards=single_goal_rewards)
-        Plot.add_curve_with_ci(timesteps, mean, low, high, label=r'$\epsilon$-greedy, $\epsilon $ = {}'.format(epsilon))
+        # Plot.add_curve_with_ci(timesteps, mean, low, high, label=r'$\epsilon$-greedy, $\epsilon $ = {}'.format(epsilon))
+        Plot.add_curve(timesteps, mean, label=r'$\epsilon$-greedy, $\epsilon $ = {}'.format(epsilon))
     policy = 'softmax'
     temps = [0.01, 0.1, 1.0]
     # temps = [2, 5, 10]
@@ -130,10 +131,12 @@ def experiment():
                                                               learning_rate,
                                                               gamma, policy, epsilon, temp, smoothing_window, plot, n,
                                                               eval_interval, goal_locations=single_goal_locations, goal_rewards=single_goal_rewards)
-        Plot.add_curve_with_ci(timesteps, mean, low, high, label=r'softmax, $ \tau $ = {}'.format(temp))
+        # Plot.add_curve_with_ci(timesteps, mean, low, high, label=r'softmax, $ \tau $ = {}'.format(temp))
+        Plot.add_curve(timesteps, mean, label=r'softmax, $ \tau $ = {}'.format(temp))
     Plot.add_hline(optimal_episode_return, label="DP optimum")
-    Plot.save('exploration_single.png')
-
+    # Plot.save('exploration_single.png')
+    Plot.save('exploration_single_unconfident.png')
+    #
     Plot = LearningCurvePlot(title=r'Multiple Target Exploration: $\epsilon$-greedy versus softmax exploration')
     Plot.set_ylim(-100, 100)
     for epsilon in epsilons:
@@ -143,7 +146,8 @@ def experiment():
                                                               gamma, policy, epsilon, temp, smoothing_window, plot, n,
                                                               eval_interval, goal_locations=multi_goal_locations,
                                                               goal_rewards=multi_goal_rewards)
-        Plot.add_curve_with_ci(timesteps, mean, low, high, label=r'$\epsilon$-greedy, $\epsilon $ = {}'.format(epsilon))
+        # Plot.add_curve_with_ci(timesteps, mean, low, high, label=r'$\epsilon$-greedy, $\epsilon $ = {}'.format(epsilon))
+        Plot.add_curve(timesteps, mean, label=r'$\epsilon$-greedy, $\epsilon $ = {}'.format(epsilon))
     policy = 'softmax'
     # temps = [0.01, 0.1, 1.0]
     for temp in temps:
@@ -153,9 +157,10 @@ def experiment():
                                                               gamma, policy, epsilon, temp, smoothing_window, plot, n,
                                                               eval_interval, goal_locations=multi_goal_locations,
                                                               goal_rewards=multi_goal_rewards)
-        Plot.add_curve_with_ci(timesteps, mean, low, high, label=r'softmax, $ \tau $ = {}'.format(temp))
+        # Plot.add_curve_with_ci(timesteps, mean, low, high, label=r'softmax, $ \tau $ = {}'.format(temp))
+        Plot.add_curve(timesteps, mean, label=r'softmax, $ \tau $ = {}'.format(temp))
     Plot.add_hline(optimal_episode_return, label="DP optimum")
-    Plot.save('exploration_multi.png')
+    Plot.save('exploration_multi_unconfident.png')
 
     # ###### Assignment 3: Q-learning versus SARSA
     policy = 'egreedy'
@@ -171,10 +176,12 @@ def experiment():
                                                                   max_episode_length, learning_rate,
                                                                   gamma, policy, epsilon, temp, smoothing_window, plot,
                                                                   n, eval_interval)
-            Plot.add_curve_with_ci(timesteps, mean, low, high,
+            # Plot.add_curve_with_ci(timesteps, mean, low, high,
+            #                        label=r'{}, $\alpha$ = {} '.format(backup_labels[backup], learning_rate))
+            Plot.add_curve(timesteps, mean,
                                    label=r'{}, $\alpha$ = {} '.format(backup_labels[backup], learning_rate))
     Plot.add_hline(optimal_episode_return, label="DP optimum")
-    Plot.save('on_off_policy.png')
+    Plot.save('on_off_policy_unconfident.png')
 
     #### Assignment 4: Back-up depth
     policy = 'egreedy'
@@ -191,6 +198,7 @@ def experiment():
                                                               gamma, policy, epsilon, temp, smoothing_window, plot, n,
                                                               eval_interval)
         Plot.add_curve_with_ci(timesteps, mean, low, high, label=r'{}-step Q-learning'.format(n))
+        # Plot.add_curve(timesteps, mean, label=r'{}-step Q-learning'.format(n))
     #
     backup = 'mc'
 
@@ -206,6 +214,7 @@ def experiment():
                                                          gamma, policy, epsilon, temp, smoothing_window, plot, n,
                                                          eval_interval)
     Plot.add_curve_with_ci(timesteps, mean, low, high, label='Monte Carlo')
+    # Plot.add_curve(timesteps, mean, label='Monte Carlo')
     Plot.add_hline(optimal_episode_return, label="DP optimum")
     Plot.save('depth.png')
 

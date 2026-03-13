@@ -58,12 +58,20 @@ def softmax(x, temp):
     z = x - max(x) # substract max to prevent overflow of softmax 
     return np.exp(z)/np.sum(np.exp(z)) # compute softmax
 
-def argmax(x):
-    ''' Own variant of np.argmax with random tie breaking '''
-    try:
-        return np.random.choice(np.where(x == np.max(x))[0])
-    except:
-        return np.argmax(x)
+# def argmax(x):
+#     ''' Own variant of np.argmax with random tie breaking '''
+#     try:
+#         return np.random.choice(np.where(x == np.max(x))[0])
+#     except:
+#         return np.argmax(x)
+
+
+def argmax(x, rng=None):
+    """np.argmax with random tie-breaking."""
+    ties = np.where(x == np.max(x))[0]
+    if rng is None:
+        return np.random.choice(ties)
+    return rng.choice(ties)
 
 def linear_anneal(t,T,start,final,percentage):
     ''' Linear annealing scheduler

@@ -31,22 +31,23 @@ def mean_ci(curves, ci=0.95):
 def average_over_repetitions(backup, n_repetitions, n_timesteps, max_episode_length, learning_rate, gamma,
                              policy='egreedy',
                              epsilon=None, temp=None, smoothing_window=None, plot=False, n=5, eval_interval=500,
-                             goal_locations=None, goal_rewards=None):
+                             goal_locations=None, goal_rewards=None, base_seed=42):
     returns_over_repetitions = []
     now = time.time()
 
     for rep in range(n_repetitions):  # Loop over repetitions
+        seed = base_seed + rep
         if backup == 'q':
             returns, timesteps = q_learning(n_timesteps, learning_rate, gamma, policy, epsilon, temp, plot,
-                                            eval_interval, goal_locations, goal_rewards)
+                                            eval_interval, goal_locations, goal_rewards, seed=seed)
         elif backup == 'sarsa':
-            returns, timesteps = sarsa(n_timesteps, learning_rate, gamma, policy, epsilon, temp, plot, eval_interval)
+            returns, timesteps = sarsa(n_timesteps, learning_rate, gamma, policy, epsilon, temp, plot, eval_interval, seed=seed)
         elif backup == 'nstep':
             returns, timesteps = n_step_Q(n_timesteps, max_episode_length, learning_rate, gamma,
-                                          policy, epsilon, temp, plot, n, eval_interval)
+                                          policy, epsilon, temp, plot, n, eval_interval, seed=seed)
         elif backup == 'mc':
             returns, timesteps = monte_carlo(n_timesteps, max_episode_length, learning_rate, gamma,
-                                             policy, epsilon, temp, plot, eval_interval)
+                                             policy, epsilon, temp, plot, eval_interval, seed=seed)
 
         returns_over_repetitions.append(returns)
 
@@ -64,7 +65,8 @@ def average_over_repetitions(backup, n_repetitions, n_timesteps, max_episode_len
 
 def experiment():
     ####### Settings
-    # Experiment      
+    # Experiment
+    seed = 1
     n_repetitions = 20  # 20
     smoothing_window = 5  # 9 # Must be an odd number. Use 'None' to switch smoothing off!
     plot = False  # Plotting is very slow, switch it off when we run repetitions

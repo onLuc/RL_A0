@@ -9,45 +9,45 @@ By Thomas Moerland
 import numpy as np
 from Helper import softmax, argmax
 
+import numpy as np
+from Helper import softmax, argmax
+
 class BaseAgent:
 
-    def __init__(self, n_states, n_actions, learning_rate, gamma):
+    def __init__(self, n_states, n_actions, learning_rate, gamma, rng=None):
         self.n_states = n_states
         self.n_actions = n_actions
         self.learning_rate = learning_rate
         self.gamma = gamma
-        self.Q_sa = np.zeros((n_states,n_actions))
-        
+        self.Q_sa = np.zeros((n_states, n_actions))
+        self.rng = rng if rng is not None else np.random.default_rng()
+
     def select_action(self, s, policy='egreedy', epsilon=None, temp=None):
-        
+
         if policy == 'greedy':
-            return argmax(self.Q_sa[s])
+            return argmax(self.Q_sa[s], rng=self.rng)
 
         elif policy == 'egreedy':
             if epsilon is None:
                 raise KeyError("Provide an epsilon")
 
-            # print(self.Q_sa[s])
-            max_action = argmax(self.Q_sa[s])
+            max_action = argmax(self.Q_sa[s], rng=self.rng)
             chance = 1 - epsilon * ((self.n_actions - 1) / self.n_actions)
-            if chance > np.random.random():
-                # exploit
+
+            if chance > self.rng.random():
                 a = max_action
             else:
-                # explore
-                options_left = list(range(0, self.n_actions))
+                options_left = list(range(self.n_actions))
                 options_left.remove(max_action)
-                # print(max_action)
-                # print(options_left)
-                a = np.random.choice(options_left)
+                a = self.rng.choice(options_left)
 
         elif policy == 'softmax':
             if temp is None:
                 raise KeyError("Provide a temperature")
-            
+
             action_probs = softmax(self.Q_sa[s], temp)
-            a = np.random.choice(self.n_actions, p=action_probs)
-              
+            a = self.rng.choice(self.n_actions, p=action_probs)
+
         return a
         
     def update(self):

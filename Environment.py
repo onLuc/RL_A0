@@ -6,7 +6,6 @@ Leiden University, The Netherlands
 By Thomas Moerland
 """
 import matplotlib
-matplotlib.use('Qt5Agg') # 'TkAgg'
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle,Circle,Arrow
@@ -17,7 +16,7 @@ class StochasticWindyGridworld:
         Compared to the book version, the vertical wind is now stochastic, and only blows 80% of times
     '''
     
-    def __init__(self,initialize_model=True):
+    def __init__(self,initialize_model=True,rng=None):
         self.height = 7 # 7
         self.width = 10 # 10
         self.shape = (self.width, self.height)
@@ -46,6 +45,7 @@ class StochasticWindyGridworld:
         self.fig = None
         self.Q_labels = None
         self.arrows = None
+        self.rng = rng if rng is not None else np.random.default_rng()
         
         # Set agent to the start location
         self.reset() 
@@ -61,7 +61,7 @@ class StochasticWindyGridworld:
         Returns the next state, the obtained reward, and a boolean whether the environment terminated '''
         self.agent_location += self.action_effects[a] # effect of action
         self.agent_location = np.clip(self.agent_location,(0,0),np.array(self.shape)-1) # bound within grid
-        if np.random.rand() < self.wind_blows_proportion: # apply effect of wind
+        if self.rng.random() < self.wind_blows_proportion: # apply effect of wind
             self.agent_location[1] += self.winds[self.agent_location[0]] # effect of wind
         self.agent_location = np.clip(self.agent_location,(0,0),np.array(self.shape)-1) # bound within grid
         s_next = self._location_to_state(self.agent_location)    

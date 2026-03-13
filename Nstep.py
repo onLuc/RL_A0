@@ -30,13 +30,24 @@ class NstepQLearningAgent(BaseAgent):
 
 
 def n_step_Q(n_timesteps, max_episode_length, learning_rate, gamma, 
-                   policy='egreedy', epsilon=None, temp=None, plot=True, n=5, eval_interval=500):
+                   policy='egreedy', epsilon=None, temp=None, plot=True, n=5, eval_interval=500, seed=None):
     ''' runs a single repetition of an MC rl agent
-    Return: rewards, a vector with the observed rewards at each timestep ''' 
+    Return: rewards, a vector with the observed rewards at each timestep '''
+
+
+    master_rng = np.random.default_rng(seed)
+
+    env_rng = np.random.default_rng(master_rng.integers(0, 2 ** 32))
+    eval_rng = np.random.default_rng(master_rng.integers(0, 2 ** 32))
+    agent_rng = np.random.default_rng(master_rng.integers(0, 2 ** 32))
+
+    env = StochasticWindyGridworld(initialize_model=False, rng=env_rng)
+    eval_env = StochasticWindyGridworld(initialize_model=True, rng=eval_rng)
+    pi = NstepQLearningAgent(env.n_states, env.n_actions, learning_rate, gamma, rng=agent_rng)
     
-    env = StochasticWindyGridworld(initialize_model=False)
-    eval_env = StochasticWindyGridworld(initialize_model=True)
-    pi = NstepQLearningAgent(env.n_states, env.n_actions, learning_rate, gamma)
+    # env = StochasticWindyGridworld(initialize_model=False)
+    # eval_env = StochasticWindyGridworld(initialize_model=True)
+    # pi = NstepQLearningAgent(env.n_states, env.n_actions, learning_rate, gamma)
 
     eval_timesteps = np.arange(0, n_timesteps, eval_interval)
     eval_returns = []
